@@ -1,0 +1,15 @@
+@url = http://127.0.0.1:5000
+
+###
+POST {{url}}/predict/
+Content-Type: application/json
+
+{
+  "file":"sample_image.jpg"
+}
+
+###
+GET {{url}}/predict
+
+###
+GET {{url}}
