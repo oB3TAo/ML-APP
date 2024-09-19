@@ -3,107 +3,34 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-
-    <!-- Custom CSS for Visual Improvements -->
-    <style>
-      body {
-        background-color: #f7f8fc;
-        color: #333;
-      }
-
-      h1, h5 {
-        color: #343a40;
-      }
-
-      .container {
-        max-width: 800px;
-        background-color: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
-
-      img {
-        max-width: 100px;
-        margin: 20px auto;
-        display: block;
-      }
-
-      .table {
-        margin-top: 20px;
-      }
-
-      th, td {
-        text-align: center;
-        vertical-align: middle;
-      }
-
-      /* Hover effect for table rows */
-      tbody tr:hover {
-        background-color: #f1f3f5;
-        cursor: pointer;
-      }
-
-      .text-muted {
-        color: #6c757d !important;
-      }
-
-      .btn-custom {
-        background-color: #007bff;
-        color: #fff;
-        border-radius: 5px;
-        padding: 10px 20px;
-        text-decoration: none;
-        transition: background-color 0.3s ease;
-      }
-
-      .btn-custom:hover {
-        background-color: #0056b3;
-      }
-    </style>
-
+    <link rel="stylesheet" href="/static/style.css">
     <title>Results</title>
   </head>
-  <body class="text-center">
-    <div class="container mt-5">
-      <h1 class="h3 mb-3 font-weight-normal">Prediction Results</h1>
-      <img src="/static/pytorch.png" alt="PyTorch Logo">
-
+  <body>
+    <div class="container">
+      <h1>Prediction Results</h1>
       {% if predictions %}
-        <h5 class="h5 mb-3 font-weight-normal">Detected Classes and Probabilities:</h5>
-        <!-- Display the top 5 predictions and probabilities for image or sentiment -->
-        <table class="table table-striped table-bordered">
-          <thead class="thead-dark">
+        <h5>Detected Classes and Probabilities:</h5>
+        <table class="table table-bordered">
+          <thead>
             <tr>
-              <th scope="col">Rank</th>
-              <th scope="col">Class Name</th>
-              <th scope="col">Probability</th>
+              <th>Rank</th>
+              <th>Class Name</th>
+              <th>Probability</th>
             </tr>
           </thead>
           <tbody>
             {% for prediction in predictions %}
             <tr>
-              <th scope="row">{{ loop.index }}</th>
+              <td>{{ loop.index }}</td>
               <td>{{ prediction.category }}</td>
               <td>{{ "%.2f" % (prediction.probability * 100) }}%</td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
-      {% elif chat_response %}
-        <h5 class="h5 mb-3 font-weight-normal">Chat Response:</h5>
-        <div class="alert alert-info" role="alert">
-          {{ chat_response }}
-        </div>
       {% endif %}
-
-      <p class="mt-4 mb-3 text-muted">Built using PyTorch, Flask, and Love</p>
-      <a href="/" class="btn-custom mt-3">Go Back</a>
+      <a href="/" class="btn btn-primary">Go Back</a>
     </div>
-
-    <script src="//code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-    <script src="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
   </body>
 </html>

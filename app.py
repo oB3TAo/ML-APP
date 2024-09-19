@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, stream_with_context, Response
 from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
 from commons import preprocess_image, get_prediction
 from torchvision import models
@@ -18,13 +18,13 @@ with open("imagenet_classes.txt", "r") as f:
 tokenizer = AutoTokenizer.from_pretrained("mistral-community/Mistral-7B-v0.2")
 chat_model = AutoModelForCausalLM.from_pretrained("mistral-community/Mistral-7B-v0.2")
 
+
+# Route for the home page
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
-        # Get the selected feature from the dropdown
         feature = request.form.get('feature')
 
-        # If feature is sentiment analysis
         if feature == 'sentiment':
             text = request.form.get('text')
             sentiment_pipeline = pipeline('sentiment-analysis')
@@ -34,7 +34,6 @@ def home():
                 "probability": sentiment['score']
             }])
 
-        # If feature is image classification
         elif feature == 'image':
             file = request.files.get('file')
             if not file:
@@ -49,15 +48,34 @@ def home():
             ]
             return render_template('result.html', predictions=top_predictions)
 
-        # If feature is chat
         elif feature == 'chat':
-            user_message = request.form.get('chat_message')
-            inputs = tokenizer(user_message, return_tensors="pt")
-            response = chat_model.generate(**inputs, max_length=100, num_return_sequences=1)
-            decoded_response = tokenizer.decode(response[0], skip_special_tokens=True)
-            return render_template('result.html', chat_response=decoded_response)
+            return redirect('/chat')
 
     return render_template('index.html')
+
+
+# Route for chat with Mistral-7B
+@app.route('/chat', methods=['GET', 'POST'])
+def chat():
+    return render_template('chat.html')
+
+
+@app.route('/stream', methods=['POST'])
+def stream():
+    def generate():
+        user_message = request.form.get('chat_message')
+        inputs = tokenizer(user_message, return_tensors="pt")
+        response = chat_model.generate(**inputs, max_length=100, num_return_sequences=1)
+        decoded_response = tokenizer.decode(response[0], skip_special_tokens=True)
+
+        # Simulate a streaming effect by yielding chunks of text
+        for chunk in decoded_response.split():
+            yield chunk + ' '
+            import time;
+            time.sleep(0.2)  # Simulate delay between chunks
+
+    return Response(stream_with_context(generate()), mimetype='text/plain')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

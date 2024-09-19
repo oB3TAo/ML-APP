@@ -3,60 +3,45 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
-    <style>
-      body { background-color: #f4f7fa; font-family: 'Arial', sans-serif; }
-      .main-container { max-width: 500px; margin: 60px auto; padding: 25px; background: linear-gradient(to right, #ffffff, #f0f2f5); border-radius: 12px; box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.15); }
-      .main-container h1 { font-size: 2rem; margin-bottom: 30px; color: #333; font-weight: 600; }
-      .btn-primary { background-color: #007bff; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; }
-      .btn-secondary { background-color: #6c757d; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; }
-      .home-button { margin-top: 20px; }
-      footer { margin-top: 40px; font-size: 0.875rem; color: #6c757d; }
-    </style>
-    <title>Feature Selection - Sentiment, Image & Chat</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Feature Selection</title>
   </head>
   <body>
-    <div class="main-container text-center">
+    <div class="main-container">
         <img class="mb-4" src="/static/pytorch.png" alt="PyTorch" width="80">
         <h1>Choose a Feature</h1>
         <form action="/" method="POST" enctype="multipart/form-data">
           <select class="form-control mb-3" id="feature" name="feature">
               <option value="image">Image Classification</option>
               <option value="sentiment">Sentiment Analysis</option>
-              <option value="chat">Chat with Model</option>
+              <option value="chat">Chat with Mistral-7B</option>
           </select>
+
           <div id="textInput" style="display: none;">
               <textarea name="text" class="form-control" rows="4" placeholder="Enter a sentence for sentiment analysis"></textarea>
           </div>
-          <div id="fileInput">
+
+          <div id="fileInput" style="display: none;">
               <input type="file" name="file" class="form-control-file" id="inputfile">
           </div>
-          <div id="chatInput" style="display: none;">
-              <textarea name="chat_message" class="form-control" rows="4" placeholder="Enter your message"></textarea>
-          </div>
+
           <br/>
           <button class="btn btn-primary btn-block" type="submit">Submit</button>
         </form>
-        <p class="mt-5 mb-3">Built using PyTorch, Hugging Face, Flask, and Love</p>
     </div>
-    <footer class="text-center">
-      <p>&copy; 2024 Your Company. All rights reserved.</p>
-    </footer>
-    <script type="text/javascript">
+
+    <script>
       document.getElementById('feature').addEventListener('change', function() {
           var feature = this.value;
           if (feature === 'sentiment') {
               document.getElementById('textInput').style.display = 'block';
               document.getElementById('fileInput').style.display = 'none';
-              document.getElementById('chatInput').style.display = 'none';
           } else if (feature === 'image') {
               document.getElementById('textInput').style.display = 'none';
               document.getElementById('fileInput').style.display = 'block';
-              document.getElementById('chatInput').style.display = 'none';
           } else if (feature === 'chat') {
               document.getElementById('textInput').style.display = 'none';
               document.getElementById('fileInput').style.display = 'none';
-              document.getElementById('chatInput').style.display = 'block';
           }
       });
     </script>

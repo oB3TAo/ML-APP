@@ -35,7 +35,7 @@ with torch.no_grad():
 probabilities = torch.nn.functional.softmax(output[0], dim=0)
 
 # Read the ImageNet class labels
-with open("imagenet_classes.txt", "r") as f:
+with open("../imagenet_classes.txt", "r") as f:
     categories = [s.strip() for s in f.readlines()]
 
 # Get the top 5 predictions
