@@ -1,25 +1,27 @@
-from flask import Flask, render_template, request, redirect, stream_with_context, Response
-from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
+from flask import Flask, render_template, request, redirect
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from commons import preprocess_image, get_prediction
 from torchvision import models
 import torch
 
 app = Flask(__name__)
 
-# Load the pretrained DenseNet121 model directly from torchvision (for image classification)
+# Charger le modèle DenseNet121 préentraîné pour la classification d'images
 image_model = models.densenet121(weights=models.DenseNet121_Weights.DEFAULT)
 image_model.eval()
 
-# Load ImageNet class labels
+# Charger les étiquettes des classes ImageNet
 with open("imagenet_classes.txt", "r") as f:
     categories = [s.strip() for s in f.readlines()]
 
-# Load Mistral-7B model for chat
-tokenizer = AutoTokenizer.from_pretrained("mistral-community/Mistral-7B-v0.2")
-chat_model = AutoModelForCausalLM.from_pretrained("mistral-community/Mistral-7B-v0.2")
+# Charger le modèle GPT-2 pour le chat
+tokenizer = AutoTokenizer.from_pretrained("gpt2")
+chat_model = AutoModelForCausalLM.from_pretrained("gpt2")
 
+# Créer une pipeline pour la génération de texte
+generator = pipeline('text-generation', model=chat_model, tokenizer=tokenizer)
 
-# Route for the home page
+# Route pour la page d'accueil
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
@@ -54,27 +56,42 @@ def home():
     return render_template('index.html')
 
 
-# Route for chat with Mistral-7B
+# Route pour le chat avec GPT-2
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
     return render_template('chat.html')
 
 
-@app.route('/stream', methods=['POST'])
-def stream():
-    def generate():
-        user_message = request.form.get('chat_message')
-        inputs = tokenizer(user_message, return_tensors="pt")
-        response = chat_model.generate(**inputs, max_length=100, num_return_sequences=1)
-        decoded_response = tokenizer.decode(response[0], skip_special_tokens=True)
+# Route pour générer la réponse complète au message utilisateur
+@app.route('/generate', methods=['POST'])
+def generate():
+    user_message = request.form.get('chat_message')
 
-        # Simulate a streaming effect by yielding chunks of text
-        for chunk in decoded_response.split():
-            yield chunk + ' '
-            import time;
-            time.sleep(0.2)  # Simulate delay between chunks
+    # Use the pipeline to generate a response with controlled parameters
+    response = generator(
+        user_message,
+        max_length=50,  # Limit the length to avoid long, repetitive answers
+        num_return_sequences=1,
+        temperature=0.7,  # Keep creativity but limit randomness
+        top_k=50,  # Reduces the number of choices at each step
+        top_p=0.9  # Limits options based on cumulative probability
+    )
 
-    return Response(stream_with_context(generate()), mimetype='text/plain')
+    # Decode the generated response
+    decoded_response = response[0]['generated_text']
+
+    # Simple post-processing to remove repetitive sentences
+    # Split the response into sentences and remove duplicates
+    sentences = decoded_response.split('. ')
+    unique_sentences = []
+    for sentence in sentences:
+        if sentence not in unique_sentences:
+            unique_sentences.append(sentence)
+
+    # Rejoin unique sentences into a final response
+    final_response = '. '.join(unique_sentences).strip()
+
+    return final_response
 
 
 if __name__ == '__main__':

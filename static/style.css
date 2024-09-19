@@ -25,6 +25,15 @@ input.form-control {
   width: 100%;
   padding: 10px;
   margin-bottom: 20px;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+}
+
+input.form-control-file {
+  padding: 10px;
+  font-size: 1rem;
+  margin-bottom: 20px;
 }
 
 button.btn {
@@ -34,34 +43,22 @@ button.btn {
   border: none;
   border-radius: 5px;
   width: 100%;
+  font-size: 1.2rem;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.container {
-  max-width: 800px;
-  margin: 60px auto;
-  padding: 30px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  text-align: center;
+button.btn:hover {
+  background-color: #0056b3;
 }
 
-table.table {
-  width: 100%;
-  margin: 20px 0;
+img {
+  width: 80px;
+  margin-bottom: 20px;
 }
 
-.alert-info {
-  padding: 15px;
-  background-color: #e9f7ff;
-  border-radius: 5px;
-}
-
-a.btn-primary {
-  background-color: #007bff;
-  padding: 10px 20px;
-  border-radius: 5px;
-  color: white;
-  text-decoration: none;
+.form-control:focus {
+  border-color: #007bff;
+  outline: 0;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
